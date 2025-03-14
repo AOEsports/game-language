@@ -304,13 +304,13 @@ export function playerNumberToRank(
 	return found ? found : UNRANKED_RANK; // Return unranked if no match found
 }
 
+const OVERWATCH = new OverwatchGameData();
+const RIVALS = new MarvelRivalsGameData();
+
 function getGameData(game?: string | null) {
 	if (game == "Overwatch") return OVERWATCH;
 	if (game == "Marvel Rivals") return RIVALS;
 	return OVERWATCH;
 }
-
-const OVERWATCH = new OverwatchGameData();
-const RIVALS = new MarvelRivalsGameData();
 
 export { getGameData, OVERWATCH, RIVALS };
