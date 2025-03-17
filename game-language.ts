@@ -44,9 +44,47 @@ export abstract class AbstractGameData {
 
 	signupButtonClass: string;
 
+	tankRole: {
+		name: string;
+		icon: string;
+		iconDark: string;
+	};
+	dpsRole: {
+		name: string;
+		icon: string;
+		iconDark: string;
+	};
+	supportRole: {
+		name: string;
+		icon: string;
+		iconDark: string;
+	};
+
 	constructor() {
 		this.storedGameRanks = []; // Explicitly initialize in constructor
 		this.setGameRanks = this.setGameRanks.bind(this);
+		this.tankRole = {
+			name: "",
+			icon: "",
+			iconDark: "",
+		};
+		this.dpsRole = {
+			name: "",
+			icon: "",
+			iconDark: "",
+		};
+		this.supportRole = {
+			name: "",
+			icon: "",
+			iconDark: "",
+		};
+
+		this.signupSupport = false;
+		this.name = "The Video Game";
+		this.ignName = "IGN";
+		this.signupButtonClass = "";
+		this.inGamePlayerCount = 5;
+		this.competitiveRankStyle = "per-role";
 	}
 
 	setGameRanks(ranks: any[]) {
@@ -74,27 +112,37 @@ export abstract class AbstractGameData {
 	get gameRanks() {
 		return this.storedGameRanks;
 	}
-
-	tankRole: {
-		name: string;
-		icon: string;
-		iconDark: string;
-	};
-	dpsRole: {
-		name: string;
-		icon: string;
-		iconDark: string;
-	};
-	supportRole: {
-		name: string;
-		icon: string;
-		iconDark: string;
-	};
 }
 
 class OverwatchGameData extends AbstractGameData {
 	constructor() {
 		super();
+
+		this.name = "Overwatch 2";
+		this.ignName = "Battle.net";
+		this.inGamePlayerCount = 5;
+		this.competitiveRankStyle = "per-role" as const;
+
+		this.signupButtonClass =
+			"from-orange-500 to-orange-600 shadow-orange-500/20 hover:shadow-orange-500/30";
+
+		this.tankRole = {
+			name: "Tank",
+			icon: "/icons/tank.webp",
+			iconDark: "/icons/dark/tank.webp",
+		};
+		this.dpsRole = {
+			name: "Damage",
+			icon: "/icons/dps.webp",
+			iconDark: "/icons/dark/dps.webp",
+		};
+		this.supportRole = {
+			name: "Support",
+			icon: "/icons/support.webp",
+			iconDark: "/icons/dark/support.webp",
+		};
+
+		this.signupSupport = true;
 
 		this.setGameRanks([
 			{
@@ -133,37 +181,37 @@ class OverwatchGameData extends AbstractGameData {
 			}),
 		]);
 	}
-
-	name = "Overwatch 2";
-	ignName = "Battle.net";
-	inGamePlayerCount = 5;
-	competitiveRankStyle = "per-role" as const;
-
-	signupButtonClass =
-		"from-orange-500 to-orange-600 shadow-orange-500/20 hover:shadow-orange-500/30";
-
-	tankRole = {
-		name: "Tank",
-		icon: "/icons/tank.webp",
-		iconDark: "/icons/dark/tank.webp",
-	};
-	dpsRole = {
-		name: "Damage",
-		icon: "/icons/dps.webp",
-		iconDark: "/icons/dark/dps.webp",
-	};
-	supportRole = {
-		name: "Support",
-		icon: "/icons/support.webp",
-		iconDark: "/icons/dark/support.webp",
-	};
-
-	signupSupport = true;
 }
 
 class MarvelRivalsGameData extends AbstractGameData {
 	constructor() {
 		super();
+
+		this.name = "Marvel Rivals";
+		this.ignName = "Marvel Rivals IGN";
+		this.inGamePlayerCount = 6;
+		this.competitiveRankStyle = "per-account" as const;
+
+		this.signupButtonClass =
+			"from-purple-500 to-cyan-500 shadow-purple-500/20 hover:shadow-purple-500/30";
+
+		this.tankRole = {
+			name: "Vanguard",
+			icon: "/icons/vanguard.webp",
+			iconDark: "/icons/dark/vanguard.webp",
+		};
+		this.dpsRole = {
+			name: "Duelist",
+			icon: "/icons/duelist.webp",
+			iconDark: "/icons/dark/duelist.webp",
+		};
+		this.supportRole = {
+			name: "Strategist",
+			icon: "/icons/strategist.webp",
+			iconDark: "/icons/dark/strategist.webp",
+		};
+
+		this.signupSupport = false;
 
 		this.setGameRanks([
 			{
@@ -202,8 +250,7 @@ class MarvelRivalsGameData extends AbstractGameData {
 			{
 				rankName: "Eternity",
 				rankDivision: 0,
-
-				rankIcon: "/rankicons/rivals/celestial.webp",
+				rankIcon: "/rankicons/rivals/eternity.webp",
 				divisionIcon: `/rankicons/tier-1.webp`,
 
 				rankValue: 3300,
@@ -213,32 +260,6 @@ class MarvelRivalsGameData extends AbstractGameData {
 			},
 		]);
 	}
-
-	name = "Marvel Rivals";
-	ignName = "Marvel Rivals IGN";
-	inGamePlayerCount = 6;
-	competitiveRankStyle = "per-account" as const;
-
-	signupButtonClass =
-		"from-purple-500 to-cyan-500 shadow-purple-500/20 hover:shadow-purple-500/30";
-
-	tankRole = {
-		name: "Vanguard",
-		icon: "/icons/vanguard.webp",
-		iconDark: "/icons/dark/vanguard.webp",
-	};
-	dpsRole = {
-		name: "Duelist",
-		icon: "/icons/duelist.webp",
-		iconDark: "/icons/dark/duelist.webp",
-	};
-	supportRole = {
-		name: "Strategist",
-		icon: "/icons/strategist.webp",
-		iconDark: "/icons/dark/strategist.webp",
-	};
-
-	signupSupport = false;
 }
 
 const UNRANKED_RANK = {
