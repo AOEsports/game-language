@@ -353,7 +353,7 @@ export function calculateBufferForRole(
 		);
 		if (foundRank) return foundRank;
 		else {
-			buffer--;
+			buffer -= 100;
 		}
 	}
 	return found;
