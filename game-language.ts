@@ -330,6 +330,35 @@ export function dbNumberToRank(
 	return found ? found : UNRANKED_RANK; // Return unranked if no match found
 }
 
+export function calculateBufferForRole(
+	game: AbstractGameData,
+	dbNumber: number,
+	buffer: number
+) {
+	if (
+		!dbNumber ||
+		dbNumber <= 0 ||
+		!game.gameRanks ||
+		game.gameRanks.length === 0
+	) {
+		return UNRANKED_RANK;
+	}
+	const found = game.gameRanks.find((rank) => rank.dbValue === dbNumber);
+	if (!found) return UNRANKED_RANK;
+	let didFind = false;
+	while (didFind && buffer > 0) {
+		const newRankNumber = found.rankValue + buffer;
+		const foundRank = game.gameRanks.find(
+			(rank) => rank.rankValue === newRankNumber
+		);
+		if (foundRank) return foundRank;
+		else {
+			buffer--;
+		}
+	}
+	return found;
+}
+
 export function playerNumberToRank(
 	game: AbstractGameData,
 	playerNumber: number
