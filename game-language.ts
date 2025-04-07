@@ -1,3 +1,15 @@
+import { getRivalsPlayerProfile } from "../fetch-rank";
+import getPlayerProfile, { getHigherRankByRole } from "../overwatchrank";
+
+export interface FetchedPlayerData {
+	ign: string;
+	privateProfile?: boolean;
+	tank?: GameRank;
+	support?: GameRank;
+	dps?: GameRank;
+	season?: string;
+}
+
 interface CompetitiveRank {
 	division: string;
 	tier: number;
@@ -303,9 +315,14 @@ export function matchToRank(
 
 export function dbNumberToRank(
 	game: AbstractGameData,
-	dbNumber: number
+	dbNumber: number | null
 ): GameRank {
-	if (dbNumber <= 0 || !game.gameRanks || game.gameRanks.length === 0) {
+	if (
+		!dbNumber ||
+		dbNumber <= 0 ||
+		!game.gameRanks ||
+		game.gameRanks.length === 0
+	) {
 		return UNRANKED_RANK;
 	}
 
@@ -323,6 +340,92 @@ export function playerNumberToRank(
 
 	const found = game.gameRanks.find((rank) => rank.rankValue == playerNumber);
 	return found ? found : UNRANKED_RANK; // Return unranked if no match found
+}
+
+export async function fetchPlayerRank(
+	game: AbstractGameData,
+	ingamename: string
+): Promise<FetchedPlayerData | null> {
+	if (game.name == "Overwatch") {
+		const profile = await getPlayerProfile(ingamename);
+		if (!profile) return Promise.resolve(null);
+		if ("error" in profile) return Promise.resolve(null);
+		if (!profile.competitive) {
+			return {
+				ign: profile.username,
+				privateProfile: true,
+			};
+		}
+
+		const highestTank = getHigherRankByRole("tank", profile);
+		const highestSupport = getHigherRankByRole("support", profile);
+		const highestDps = getHigherRankByRole("dps", profile);
+
+		return {
+			ign: profile.username,
+			tank: highestTank?.rank
+				? matchToRank(
+						game,
+						highestTank?.rank.division,
+						highestTank?.rank.tier
+				  )
+				: UNRANKED_RANK,
+			support: highestSupport?.rank
+				? matchToRank(
+						game,
+						highestSupport?.rank.division,
+						highestSupport?.rank.tier
+				  )
+				: UNRANKED_RANK,
+			dps: highestDps?.rank
+				? matchToRank(
+						game,
+						highestDps?.rank.division,
+						highestDps?.rank.tier
+				  )
+				: UNRANKED_RANK,
+			season: profile
+				? profile.competitive
+					? profile.competitive.pc
+						? `${profile.competitive.pc.season}`
+						: profile.competitive.console
+						? `${profile.competitive.console.season}`
+						: "Unknown Season"
+					: "No Comp"
+				: "Private Profile",
+			privateProfile: false,
+		};
+	}
+	if (game.name == "Marvel Rivals") {
+		const rivalsProfile = await getRivalsPlayerProfile(ingamename);
+		if (!rivalsProfile) return Promise.resolve(null);
+
+		if (rivalsProfile.isPrivate || !("ranks" in rivalsProfile)) {
+			return {
+				ign: rivalsProfile.name,
+				privateProfile: true,
+			};
+		}
+
+		return {
+			ign: rivalsProfile.name,
+			tank: dbNumberToRank(
+				game,
+				rivalsProfile.ranks.vanguard.currentRank.aoeNumber
+			),
+			support: dbNumberToRank(
+				game,
+				rivalsProfile.ranks.strategist.currentRank.aoeNumber
+			),
+			dps: dbNumberToRank(
+				game,
+				rivalsProfile.ranks.duelist.currentRank.aoeNumber
+			),
+			season: rivalsProfile.ranks.vanguard.seasonId,
+			privateProfile: false,
+		};
+	}
+	return Promise.resolve(null);
 }
 
 const OVERWATCH = new OverwatchGameData();
