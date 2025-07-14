@@ -375,7 +375,8 @@ export async function fetchPlayerRank(
 	game: AbstractGameData,
 	ingamename: string
 ): Promise<FetchedPlayerData | null> {
-	if (game.name == "Overwatch") {
+	console.log(`Fetching rank for ${ingamename}, in game ${game.name}`);
+	if (game.name == "Overwatch" || game.name == "Overwatch 2") {
 		const profile = await getPlayerProfile(ingamename);
 		if (!profile) return Promise.resolve(null);
 		if ("error" in profile) return Promise.resolve(null);
