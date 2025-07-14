@@ -388,8 +388,8 @@ export async function fetchPlayerRank(
 		}
 
 		const highestTank = getHigherRankByRole("tank", profile);
+		const highestDps = getHigherRankByRole("damage", profile);
 		const highestSupport = getHigherRankByRole("support", profile);
-		const highestDps = getHigherRankByRole("dps", profile);
 
 		return {
 			ign: profile.username,
